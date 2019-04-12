@@ -1,0 +1,23 @@
+---------------------------------
+   go中new 和 make 的使用区别
+---------------------------------
+
+
+他们的区别在于new分配内存，make初始化slice，map和channel类型。
+
+内置函数make(T,args) 与new(T)的目的不同。
+make只创建slice，map和channel，返回一个类型T的一个初始化值（非0值). 产生这种区别的原因在于这三种类型在隐藏着表示对在使用前必须初始化的数据结构的引用。一个切片，是一个具有3 个item的描述符，它包含一个指向数据的指针，长度和容量。在初始化这item之前，这个slice就是nil。
+对应slice，map，channel来说，make初始化内部的数据结构并准备要使用的值的。例如
+
+make([]int,10,100)
+分配一个有100个整数的数据组并创建一个slice结构，这个slice长度为10，容量为100并指向数组的前10个元素。make slice时，容量参数可以省略。相反，new([]int) 返回一个指向新分配的0值的slice的指针，也就是一个指向nil值的指针。
+
+var p *[]int = new([]int)       //分配slice结构; *p == nil; rarely useful
+var v  []int = make([]int, 100) //v现在引用一个有100个int的数组
+
+// 不必要的复杂
+var p *[]int = new([]int)
+*p = make([]int, 100, 100)
+
+// 惯用方法:
+v := make([]int, 100)
